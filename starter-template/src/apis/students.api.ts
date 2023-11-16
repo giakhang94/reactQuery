@@ -1,4 +1,4 @@
-import { Student, Students } from 'types/students.type'
+import { Student, StudentUpdate, Students } from 'types/students.type'
 import http from 'utils/http'
 
 export const getStudents = (page: number | string, limit: number | string) =>
@@ -14,5 +14,5 @@ export const updateStudent = (student: Omit<Student, 'id'>, id: string) =>
   http.patch<Students>(`/students/${id}`, student)
 
 export const getStudentById = (id: string) => {
-  return http.get<Students>(`/students/${id}`)
+  return http.get<StudentUpdate>(`/students/${id}`)
 }

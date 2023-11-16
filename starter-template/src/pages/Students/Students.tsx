@@ -82,7 +82,7 @@ export default function Students() {
           </thead>
           <tbody>
             {data &&
-              data?.data.map((student) => {
+              data?.data.map((student: any) => {
                 return (
                   <tr
                     key={student.id}

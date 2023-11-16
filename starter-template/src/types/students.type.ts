@@ -12,3 +12,5 @@ export interface Student {
 //tạo kiểu cho list students, chỉ lấy ra những field có sẵn từ data
 //có sẵn interface Student rồi thì xài Pick để chọn ra các cái cần thiết
 export type Students = Pick<Student, 'id' | 'email' | 'avatar' | 'last_name'>[]
+
+export type StudentUpdate = Omit<Student, 'id'>
