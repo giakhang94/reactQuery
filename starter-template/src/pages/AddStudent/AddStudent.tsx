@@ -1,16 +1,16 @@
-import { useQuery, useMutation } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { addStudent, getStudents, updateStudent, getStudentById } from 'apis/students.api'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useMatch, useParams } from 'react-router-dom'
 import { Student } from 'types/students.type'
 import { isAxiosError } from 'utils/utils'
 import { toast } from 'react-toastify'
-
 type FormStateType = Omit<Student, 'id'>
 type FormError = {
   [key in keyof FormStateType]: string | null
 }
 export default function AddStudent() {
+  const queryClient = useQueryClient()
   const { id } = useParams()
   const initState: FormStateType = {
     avatar: '',
@@ -31,10 +31,14 @@ export default function AddStudent() {
   })
   const updateMutate = useMutation({
     mutationFn: (body: FormStateType) => {
+      //ở dưới gọi mutate(formState), đối số formState sẽ được truyền vào
+      //truyền vào body của hàm mutationFn(body)
       return updateStudent(body, id ? id : '101')
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log(data)
       toast.success('Update!')
+      queryClient.setQueryData(['student', id], data)
     }
   })
 

@@ -16,3 +16,7 @@ export const updateStudent = (student: Omit<Student, 'id'>, id: string) =>
 export const getStudentById = (id: string) => {
   return http.get<StudentUpdate>(`/students/${id}`)
 }
+
+export const deleteStudent = (id: string) => {
+  return http.delete(`students/${id}`)
+}

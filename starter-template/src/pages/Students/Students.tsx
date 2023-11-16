@@ -1,10 +1,12 @@
-import { keepPreviousData, useQuery } from '@tanstack/react-query'
-import { getStudents } from 'apis/students.api'
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { deleteStudent, getStudents } from 'apis/students.api'
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useQueryString } from 'utils/utils'
 export default function Students() {
+  const queryClient = useQueryClient()
   const queryString = useQueryString()
+  // console.log(queryString)
   const page = Number(queryString.page || 1)
   const limit = Number(queryString.limit || 9)
   const studentQuery = {
@@ -16,6 +18,19 @@ export default function Students() {
     placeholderData: keepPreviousData
     // staleTime: 5 * 1000 * 60,
     // catchTime: 5 * 1000
+  }
+  const mutation = useMutation({
+    mutationFn: async (id: string) => {
+      try {
+        await deleteStudent(id ? id : 'tao')
+        queryClient.invalidateQueries({ queryKey: ['students', page] })
+      } catch (error) {
+        console.log(error)
+      }
+    }
+  })
+  const handleDelete = (id: string) => {
+    mutation.mutate(id)
   }
 
   //pagination setup
@@ -103,7 +118,14 @@ export default function Students() {
                       >
                         Edit
                       </Link>
-                      <button className='font-medium text-red-600 dark:text-red-500'>Delete</button>
+                      <button
+                        className='font-medium text-red-600 dark:text-red-500'
+                        onClick={() => {
+                          handleDelete(student.id)
+                        }}
+                      >
+                        Delete
+                      </button>
                     </td>
                   </tr>
                 )
