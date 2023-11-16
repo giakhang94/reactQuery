@@ -6,7 +6,7 @@ import { useQueryString } from 'utils/utils'
 export default function Students() {
   const queryClient = useQueryClient()
   const queryString = useQueryString()
-  console.log(queryString)
+  console.log('queryString', queryString)
   const page = Number(queryString.page || 1)
   const limit = Number(queryString.limit || 9)
   const studentQuery = {
