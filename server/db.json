@@ -1019,6 +1019,26 @@
       "gender": "other",
       "last_name": "Nguyenn",
       "id": 102
+    },
+    {
+      "avatar": "tao",
+      "btc_address": "Lô a, cầu thang 4, chung cư 43R Hồ Văn Huê, P9, Phú Nhuận",
+      "email": "testResetForm@gmail.com",
+      "country": "VietNam",
+      "first_name": "Test",
+      "gender": "male",
+      "last_name": "Form reset",
+      "id": 103
+    },
+    {
+      "avatar": "tao",
+      "btc_address": "Lô a, cầu thang 4, chung cư 43R Hồ Văn Huê, P9, Phú Nhuận",
+      "email": "testResetForm2@gmail.com",
+      "country": "VietNam",
+      "first_name": "setFormState2",
+      "gender": "male",
+      "last_name": "Reset2",
+      "id": 104
     }
   ]
 }

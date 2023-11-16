@@ -1,11 +1,14 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { addStudent, getStudents, updateStudent, getStudentById } from 'apis/students.api'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useMatch, useParams } from 'react-router-dom'
 import { Student } from 'types/students.type'
+import { isAxiosError } from 'utils/utils'
 
 type FormStateType = Omit<Student, 'id'>
-
+type FormError = {
+  [key in keyof FormStateType]: string | null
+}
 export default function AddStudent() {
   const { id } = useParams()
   const initState: FormStateType = {
@@ -20,7 +23,7 @@ export default function AddStudent() {
   const [formState, setFormState] = useState<FormStateType>(initState)
 
   const addMatch = useMatch('/students/add')
-  const { mutate } = useMutation({
+  const { mutate, mutateAsync, isError, error, reset, data, status } = useMutation({
     mutationFn: (body: FormStateType) => {
       return addStudent(body)
     }
@@ -31,17 +34,39 @@ export default function AddStudent() {
     }
   })
 
-  const errorUpdate = updateMutate.error
+  //xy ly errors from add student mutate
+  console.log('error add students: ', isError)
+
+  const errorForm = useMemo(() => {
+    if (isAxiosError<{ error: FormError }>(error) && error.response?.status === 422) {
+      return error.response?.data.error
+    }
+    return null
+  }, [isError])
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.name === 'floating_email') {
       setFormState((prev) => ({ ...prev, email: e.target.value }))
     } else {
       setFormState((prev) => ({ ...prev, [e.target.name]: e.target.value }))
     }
+    if (error || data) {
+      reset()
+    }
   }
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    mutate(formState)
+    try {
+      await mutateAsync(formState)
+      setFormState(initState)
+    } catch (er) {
+      console.log(er)
+    }
+    // mutate(formState, {
+    //   onSuccess: () => {
+    //     setFormState(initState)
+    //   }
+    // })
   }
   const handleUpdateSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -62,7 +87,7 @@ export default function AddStudent() {
       <form className='mt-6' action='POST' onSubmit={!!addMatch ? handleSubmit : handleUpdateSubmit}>
         <div className='group relative z-0 mb-6 w-full'>
           <input
-            type='email'
+            type='text'
             name='floating_email'
             id='floating_email'
             className='peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent py-2.5 px-0 text-sm text-gray-900 focus:border-blue-600 focus:outline-none focus:ring-0 dark:border-gray-600 dark:text-white dark:focus:border-blue-500'
@@ -77,6 +102,9 @@ export default function AddStudent() {
           >
             Email address
           </label>
+          {errorForm && (
+            <p className='text-md mt-2 rounded-sm bg-red-300 py-2 px-2 font-bold text-red-600'>{errorForm.email}</p>
+          )}
         </div>
 
         <div className='group relative z-0 mb-6 w-full'>

@@ -4,7 +4,7 @@ const router = jsonServer.router("db.json");
 const middlewares = jsonServer.defaults();
 
 const PORT = 4000;
-const DELAY = 0;
+const DELAY = 2;
 
 const validateEmail = (email) => {
   return String(email)
